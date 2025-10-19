@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="format-detection" content="telephone=yes"> <!-- 识别电话号码 -->
   <title>请多关照 - 挪车提示</title>
-  <!-- 引入Tailwind CSS -->
+  <!-- 引入外部资源 -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- 引入Font Awesome图标 -->
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   
   <!-- Tailwind配置 -->
@@ -36,37 +36,40 @@
       .card-shadow {
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       }
+      .touch-scale {
+        touch-action: manipulation; /* 优化移动端点击体验 */
+      }
     }
   </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen flex items-center justify-center p-4 font-sans">
-  <!-- 主卡片 -->
-  <div class="bg-white rounded-3xl p-8 max-w-md w-full card-shadow transform transition-all duration-300 hover:scale-[1.01]">
+  <!-- 主卡片 - 适配各种手机尺寸 -->
+  <div class="bg-white rounded-3xl p-6 sm:p-8 w-full max-w-md card-shadow transform transition-all duration-300 hover:scale-[1.01]">
     
     <!-- 标题区域 -->
-    <div class="text-center mb-6">
-      <h1 class="text-[clamp(1.5rem,5vw,2rem)] font-bold text-dark">临时停车，请多关照</h1>
-      <p class="text-gray-500 mt-2">如有妨碍，请随时联系</p>
+    <div class="text-center mb-5 sm:mb-6">
+      <h1 class="text-[clamp(1.4rem,6vw,2rem)] font-bold text-dark">临时停车，请多关照</h1>
+      <p class="text-gray-500 mt-2 text-sm sm:text-base">如有妨碍，请随时联系</p>
     </div>
     
     <!-- 装饰图标 -->
-    <div class="flex justify-center my-4">
-      <i class="fa fa-car text-primary/30 text-5xl"></i>
+    <div class="flex justify-center my-3 sm:my-4">
+      <i class="fa fa-car text-primary/30 text-[4rem] sm:text-5xl"></i>
     </div>
     
-    <!-- 电话号码区域 - 点击拨号 -->
-    <a href="tel:13800138000" class="block">
-      <div class="bg-primary/5 rounded-2xl p-6 my-6 text-center cursor-pointer hover:bg-primary/10 transition-colors">
-        <p class="text-gray-500 mb-2">点击拨打</p>
-        <div class="flex items-center justify-center gap-3">
-          <i class="fa fa-phone text-primary text-xl"></i>
-          <span class="text-[clamp(1.8rem,8vw,2.5rem)] font-bold text-primary number-shadow tracking-wider">138 0013 8000</span>
+    <!-- 电话号码区域 - 优化移动端点击区域 -->
+    <a href="tel:13800138000" class="block -mx-2 sm:-mx-0">
+      <div class="bg-primary/5 rounded-2xl p-5 sm:p-6 my-5 sm:my-6 text-center cursor-pointer hover:bg-primary/10 transition-colors touch-scale">
+        <p class="text-gray-500 mb-2 text-sm">点击拨打</p>
+        <div class="flex items-center justify-center gap-2 sm:gap-3">
+          <i class="fa fa-phone text-primary text-lg sm:text-xl"></i>
+          <span class="text-[clamp(1.6rem,10vw,2.5rem)] font-bold text-primary number-shadow tracking-wider">18568256802</span>
         </div>
       </div>
     </a>
     
     <!-- 温馨提示 -->
-    <div class="bg-neutral rounded-xl p-4 text-sm text-gray-600">
+    <div class="bg-neutral rounded-xl p-3 sm:p-4 text-xs sm:text-sm text-gray-600">
       <p class="flex items-start gap-2">
         <i class="fa fa-lightbulb-o text-yellow-500 mt-1"></i>
         <span>临时停靠，我会尽快回来，给您带来不便敬请谅解</span>
@@ -74,27 +77,38 @@
     </div>
     
     <!-- 底部装饰 -->
-    <div class="mt-8 text-center text-gray-400 text-sm">
+    <div class="mt-6 sm:mt-8 text-center text-gray-400 text-xs sm:text-sm">
       <p>感谢您的理解与配合</p>
     </div>
   </div>
   
-  <!-- 简单的交互效果 -->
+  <!-- 交互脚本 -->
   <script>
     // 点击电话区域时添加反馈动画
-    document.querySelector('a[href^="tel"]').addEventListener('click', function() {
-      this.querySelector('div').classList.add('bg-primary/20');
+    document.querySelector('a[href^="tel"]').addEventListener('click', function(e) {
+      // 防止多次点击
+      e.preventDefault();
+      const telLink = this;
+      const phoneDiv = this.querySelector('div');
+      
+      // 添加点击反馈
+      phoneDiv.classList.add('bg-primary/20', 'scale-98');
+      
+      // 延迟执行拨号，确保用户看到反馈
       setTimeout(() => {
-        this.querySelector('div').classList.remove('bg-primary/20');
-      }, 300);
+        phoneDiv.classList.remove('bg-primary/20', 'scale-98');
+        window.location.href = telLink.getAttribute('href');
+      }, 200);
     });
     
     // 页面加载动画
     document.addEventListener('DOMContentLoaded', function() {
-      document.querySelector('.card-shadow').classList.add('opacity-0', 'translate-y-4');
+      const card = document.querySelector('.card-shadow');
+      card.classList.add('opacity-0', 'translate-y-4');
+      
       setTimeout(() => {
-        document.querySelector('.card-shadow').classList.remove('opacity-0', 'translate-y-4');
-        document.querySelector('.card-shadow').classList.add('transition-all', 'duration-500');
+        card.classList.add('transition-all', 'duration-500');
+        card.classList.remove('opacity-0', 'translate-y-4');
       }, 100);
     });
   </script>
