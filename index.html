@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="format-detection" content="telephone=yes"> <!-- 识别电话号码 -->
-  <title>请多关照 - 挪车提示</title>
+  <meta name="format-detection" content="telephone=yes">
+  <title>挪车提示</title>
   <!-- 引入外部资源 -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -37,33 +37,45 @@
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       }
       .touch-scale {
-        touch-action: manipulation; /* 优化移动端点击体验 */
+        touch-action: manipulation;
+      }
+      .license-plate {
+        letter-spacing: 8px;
+        text-indent: 8px; /* 调整首字符间距，使整体更均匀 */
       }
     }
   </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen flex items-center justify-center p-4 font-sans">
-  <!-- 主卡片 - 适配各种手机尺寸 -->
-  <div class="bg-white rounded-3xl p-6 sm:p-8 w-full max-w-md card-shadow transform transition-all duration-300 hover:scale-[1.01]">
+  <!-- 主卡片 -->
+  <div class="bg-white rounded-3xl p-6 sm:p-6 w-full max-w-md card-shadow transform transition-all duration-300 hover:scale-[1.01]">
     
     <!-- 标题区域 -->
-    <div class="text-center mb-5 sm:mb-6">
+    <div class="text-center mb-3 sm:mb-4">
       <h1 class="text-[clamp(1.4rem,6vw,2rem)] font-bold text-dark">临时停车，请多关照</h1>
-      <p class="text-gray-500 mt-2 text-sm sm:text-base">如有妨碍，请随时联系</p>
+      <p class="text-gray-500 mt-1 text-sm sm:text-base">如有妨碍，请随时联系</p>
+    </div>
+    
+    <!-- 车牌号展示区 -->
+    <div class="bg-neutral/50 rounded-xl p-3 text-center mb-4">
+      <p class="text-gray-500 text-xs sm:text-sm mb-1">车牌号</p>
+      <div class="inline-block bg-white px-4 py-2 rounded-lg border border-gray-200">
+        <span class="text-[clamp(1.2rem,5vw,1.6rem)] font-bold text-dark license-plate">豫G·1895Q</span>
+      </div>
     </div>
     
     <!-- 装饰图标 -->
-    <div class="flex justify-center my-3 sm:my-4">
+    <div class="flex justify-center my-2 sm:my-3">
       <i class="fa fa-car text-primary/30 text-[4rem] sm:text-5xl"></i>
     </div>
     
-    <!-- 电话号码区域 - 优化移动端点击区域 -->
-    <a href="tel:13800138000" class="block -mx-2 sm:-mx-0">
+    <!-- 电话号码区域 -->
+    <a href="tel:18568256802" class="block -mx-2 sm:-mx-0">
       <div class="bg-primary/5 rounded-2xl p-5 sm:p-6 my-5 sm:my-6 text-center cursor-pointer hover:bg-primary/10 transition-colors touch-scale">
         <p class="text-gray-500 mb-2 text-sm">点击拨打</p>
         <div class="flex items-center justify-center gap-2 sm:gap-3">
           <i class="fa fa-phone text-primary text-lg sm:text-xl"></i>
-          <span class="text-[clamp(1.6rem,10vw,2.5rem)] font-bold text-primary number-shadow tracking-wider">18568256802</span>
+          <span class="text-[clamp(1.6rem,10vw,2.5rem)] font-bold text-primary number-shadow tracking-wider">185 6825 6802</span>
         </div>
       </div>
     </a>
@@ -86,15 +98,12 @@
   <script>
     // 点击电话区域时添加反馈动画
     document.querySelector('a[href^="tel"]').addEventListener('click', function(e) {
-      // 防止多次点击
       e.preventDefault();
       const telLink = this;
       const phoneDiv = this.querySelector('div');
       
-      // 添加点击反馈
       phoneDiv.classList.add('bg-primary/20', 'scale-98');
       
-      // 延迟执行拨号，确保用户看到反馈
       setTimeout(() => {
         phoneDiv.classList.remove('bg-primary/20', 'scale-98');
         window.location.href = telLink.getAttribute('href');
