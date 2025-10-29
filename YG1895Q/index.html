@@ -56,6 +56,12 @@
       <p class="text-gray-500 mt-1 text-sm sm:text-base">如有妨碍，请随时联系</p>
     </div>
     
+    <!-- 位置和天气信息 -->
+    <div id="weather" class="bg-blue-50 rounded-xl p-3 text-center mb-4" style="display: none;">
+      <p id="locationInfo" class="text-primary font-medium"></p>
+      <p id="weatherInfo" class="text-gray-600 text-sm mt-1"></p>
+    </div>
+    
     <!-- 车牌号展示区 -->
     <div class="bg-neutral/50 rounded-xl p-3 text-center mb-4">
       <p class="text-gray-500 text-xs sm:text-sm mb-1">车牌号</p>
@@ -110,15 +116,66 @@
       }, 200);
     });
     
-    // 页面加载动画
+    // 获取位置和天气信息
     document.addEventListener('DOMContentLoaded', function() {
       const card = document.querySelector('.card-shadow');
+      const locationInfo = document.getElementById('locationInfo');
+      const weatherInfo = document.getElementById('weatherInfo');
+      
+      // 页面加载动画
       card.classList.add('opacity-0', 'translate-y-4');
       
       setTimeout(() => {
         card.classList.add('transition-all', 'duration-500');
         card.classList.remove('opacity-0', 'translate-y-4');
       }, 100);
+      
+      // 首先获取位置信息
+      fetch('http://nmc.cn/rest/position')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('位置信息获取失败');
+          }
+          return response.json();
+        })
+        .then(positionData => {
+          // 显示位置信息
+          const province = positionData.province || '未知省份';
+          const city = positionData.city || '未知城市';
+          locationInfo.textContent = `${province} ${city}`;
+          // 显示天气div
+          document.getElementById('weather').style.display = 'block';
+          
+          // 获取stationid
+          const stationId = positionData.code || '';
+          if (stationId) {
+            // 然后获取天气信息
+            return fetch(`http://nmc.cn/rest/weather?stationid=${stationId}`);
+          } else {
+            throw new Error('获取stationId失败');
+          }
+        })
+        .then(weatherResponse => {
+          if (!weatherResponse.ok) {
+            throw new Error('天气信息获取失败');
+          }
+          return weatherResponse.json();
+        })
+        .then(weatherData => {
+          // 显示天气信息
+          const real = weatherData.data.real;
+          const weather = real.weather.info || '未知天气';
+          const temperature = real.weather.temperature ? `${real.weather.temperature}°C` : '未知温度';
+          weatherInfo.textContent = `${weather} ${temperature} ${real.wind.direct}${real.wind.power} 湿度${real.weather.humidity}%`;
+        })
+        .catch(error => {
+          console.error('获取数据失败:', error);
+          if (error.message.includes('位置')) {
+            locationInfo.textContent = '位置信息获取失败';
+          } else if (error.message.includes('天气')) {
+            weatherInfo.textContent = '天气信息获取失败';
+          }
+        });
     });
   </script>
 </body>
