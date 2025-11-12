@@ -5,14 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>个人日历</title>
-  <!-- 确保 Tailwind CDN 链接正确（使用稳定版本） -->
   <script src="js/tailwindcss.js"></script>
   <link href="css/font-awesome.min.css" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          // 1. 修正：自定义颜色（保持原有配色）
           colors: {
             primary: '#7C3AED',
             secondary: '#64748B',
@@ -29,9 +27,8 @@
           fontFamily: {
             sans: ['Inter', 'system-ui', 'sans-serif'],
           },
-          // 2. 关键修正：backgroundImage 语法（用双引号包裹 URL，避免嵌套冲突）
           backgroundImage: {
-            'calendar-pattern': "url(https://picsum.photos/id/104/1000/1000)", // 移除内部单引号
+            'calendar-pattern': "url('https://picsum.photos/id/104/1000/1000')",
           }
         }
       }
@@ -43,9 +40,9 @@
                 content-visibility: auto;
             }
             
-            /* 3. 清理：确保工具类语法无多余字符（如多余的 /、未闭合括号） */
             .calendar-day {
-                @apply h-20 sm:h-24 md:h-28 border border-gray-100 rounded-lg p-2 transition-all duration-300 
+                /* 关键修改：使用 min-h-20 并添加 md:h-28 响应式高度 */
+                @apply min-h-[120px] md:h-28 border border-gray-100 rounded-lg p-2 transition-all duration-300 
                        hover:border-primary hover:bg-purple-50 hover:shadow-md relative overflow-hidden;
             }
             
@@ -55,8 +52,9 @@
             }
             
             .event-badge {
-                @apply text-xs px-1.5 py-0.5 rounded-md mb-1 truncate shadow-sm 
-                       transition-all duration-200 hover:scale-105;
+                /* 关键修改：在移动端允许换行，在大屏幕上保持不换行和truncate */
+                @apply text-xs px-1.5 py-0.5 rounded-md mb-1 shadow-sm 
+                       transition-all duration-200 hover:scale-105 md:truncate md:whitespace-nowrap;
             }
             
             .gradient-border {
@@ -85,11 +83,10 @@
                 @apply absolute -bottom-4 -right-4 text-primary/5 transform rotate-12 text-6xl z-0;
             }
         }
-    </style>
+  </style>
 </head>
 
 <body class="bg-gray-50 font-sans text-dark min-h-screen">
-  <!-- 4. 修正：背景图使用方式（确保类名正确，无多余字符） -->
   <div class="fixed inset-0 bg-calendar-pattern opacity-5 bg-cover bg-center pointer-events-none"></div>
 
   <div class="container mx-auto px-4 py-8 max-w-6xl relative z-10">
@@ -109,8 +106,9 @@
         <h2 id="current-year" class="text-xl font-semibold">2025年11月 - 2026年2月</h2>
       </div>
 
-      <div id="calendar-container" class="p-4 md:p-6">
-        <div class="grid grid-cols-7 gap-2 mb-4">
+      <!-- 关键修改：为容器添加 overflow-x-auto 以应对极端情况，并减小移动端的 gap -->
+      <div id="calendar-container" class="p-2 md:p-6 overflow-x-auto">
+        <div class="grid grid-cols-7 gap-1 md:gap-2 mb-4">
           <div class="calendar-day-header">日</div>
           <div class="calendar-day-header">一</div>
           <div class="calendar-day-header">二</div>
@@ -203,8 +201,9 @@
       monthHeader.innerHTML = `${monthIcons[month]} ${year}年${month + 1}月`;
       monthContainer.appendChild(monthHeader);
 
+      // 关键修改：减小移动端的 gap
       const calendarGrid = document.createElement('div');
-      calendarGrid.className = 'grid grid-cols-7 gap-2';
+      calendarGrid.className = 'grid grid-cols-7 gap-1 md:gap-2';
 
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -267,5 +266,4 @@
     generateCalendarForMonth(2026, 1);
   </script>
 </body>
-
 </html>
