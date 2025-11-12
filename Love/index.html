@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人日历</title>
+  <!-- 确保 Tailwind CDN 链接正确（使用稳定版本） -->
+  <script src="js/tailwindcss.js"></script>
+  <link href="css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          // 1. 修正：自定义颜色（保持原有配色）
+          colors: {
+            primary: '#7C3AED',
+            secondary: '#64748B',
+            accent: '#F59E0B',
+            event: {
+              annual: '#C7D2FE',
+              wedding: '#FCA5A5',
+              family: '#FDE68A',
+              holiday: '#94A3B8',
+              marriage: '#DDD6FE',
+              other: '#E2E8F0'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          // 2. 关键修正：backgroundImage 语法（用双引号包裹 URL，避免嵌套冲突）
+          backgroundImage: {
+            'calendar-pattern': "url(https://picsum.photos/id/104/1000/1000)", // 移除内部单引号
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            
+            /* 3. 清理：确保工具类语法无多余字符（如多余的 /、未闭合括号） */
+            .calendar-day {
+                @apply h-20 sm:h-24 md:h-28 border border-gray-100 rounded-lg p-2 transition-all duration-300 
+                       hover:border-primary hover:bg-purple-50 hover:shadow-md relative overflow-hidden;
+            }
+            
+            .calendar-day-header {
+                @apply h-12 flex items-center justify-center text-sm font-semibold text-secondary 
+                       bg-purple-50 rounded-lg;
+            }
+            
+            .event-badge {
+                @apply text-xs px-1.5 py-0.5 rounded-md mb-1 truncate shadow-sm 
+                       transition-all duration-200 hover:scale-105;
+            }
+            
+            .gradient-border {
+                @apply relative;
+            }
+            
+            .gradient-border::before {
+                content: "";
+                @apply absolute inset-0 rounded-xl p-[2px] bg-gradient-to-r from-primary to-accent -z-10;
+            }
+            
+            .today-highlight {
+                @apply bg-primary/10 border-primary relative;
+            }
+            
+            .today-highlight::after {
+                content: "今天";
+                @apply absolute -top-1 -right-1 bg-primary text-white text-xs px-1.5 py-0.5 rounded-full;
+            }
+            
+            .month-title {
+                @apply text-xl font-semibold text-primary flex items-center gap-2;
+            }
+            
+            .decorative-icon {
+                @apply absolute -bottom-4 -right-4 text-primary/5 transform rotate-12 text-6xl z-0;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans text-dark min-h-screen">
+  <!-- 4. 修正：背景图使用方式（确保类名正确，无多余字符） -->
+  <div class="fixed inset-0 bg-calendar-pattern opacity-5 bg-cover bg-center pointer-events-none"></div>
+
+  <div class="container mx-auto px-4 py-8 max-w-6xl relative z-10">
+    <header class="mb-8 text-center relative">
+      <div
+        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[12rem] text-primary/5 font-bold z-0">
+        <i class="fa fa-calendar"></i>
+      </div>
+      <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-2 relative z-10">
+        <i class="fa fa-calendar-check-o text-primary mr-2"></i>个人日历
+      </h1>
+      <p class="text-secondary max-w-md mx-auto relative z-10">重要日期与事件安排，让生活更有规划</p>
+    </header>
+
+    <main class="bg-white rounded-xl shadow-xl overflow-hidden gradient-border">
+      <div class="bg-gradient-to-r from-primary to-accent text-white p-4 flex justify-center items-center">
+        <h2 id="current-year" class="text-xl font-semibold">2025年11月 - 2026年2月</h2>
+      </div>
+
+      <div id="calendar-container" class="p-4 md:p-6">
+        <div class="grid grid-cols-7 gap-2 mb-4">
+          <div class="calendar-day-header">日</div>
+          <div class="calendar-day-header">一</div>
+          <div class="calendar-day-header">二</div>
+          <div class="calendar-day-header">三</div>
+          <div class="calendar-day-header">四</div>
+          <div class="calendar-day-header">五</div>
+          <div class="calendar-day-header">六</div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    // 事件数据（无修改）
+    const events = {
+        '2025': {
+          '11': {
+            '20': ['买票'],
+            '23': ['买返程票']
+          },
+          '12': {
+            '4': ['休年假', '坐高铁回家', '拿户口本'],
+            '5': ['休年假', '婚检', '登记'],
+            '6': ['尝菜（待定）'],
+            '7': ['参加瑶瑶婚礼', '返程回青岛']
+          }
+        },
+        '2026': {
+          '1': { 
+            '24': ['坐高铁回家', '准备婚礼'], 
+            '25': ['准备婚礼'], 
+            '26': ['休年假', '准备婚礼'], 
+            '27': ['休年假', '准备婚礼'], 
+            '28': ['休婚假', '结婚啦💒'], 
+            '29': ['休婚假', '耍💕'], 
+            '30': ['休婚假', '耍💕'], 
+            '31': ['休婚假', '耍💕'] },
+          '2': { 
+            '1': ['休婚假', '耍💕'], 
+            '2': ['休婚假', '耍💕'], 
+            '3': ['休婚假', '耍💕'], 
+            '4': ['休婚假', '耍💕'], 
+            '5': ['休婚假', '耍💕'], 
+            '6': ['休婚假', '耍💕'], 
+            '7': ['休婚假', '耍💕'], 
+            '8': ['休婚假', '耍💕'], 
+            '9': ['休婚假', '耍💕'], 
+            '10': ['休婚假', '耍💕'], 
+            '11': ['休婚假', '耍💕'], 
+            '12': ['休婚假', '耍💕'], 
+            '13': ['休婚假', '耍💕'], 
+            '14': ['休婚假', '耍💕'], 
+            '15': ['法定年假', '耍💕', '过年🧨'], 
+            '16': ['法定年假', '耍💕', '过年🧨'], 
+            '17': ['法定年假', '耍💕', '过年🧨'], 
+            '18': ['法定年假', '耍💕', '过年🧨'], 
+            '19': ['法定年假', '耍💕', '过年🧨'], 
+            '20': ['法定年假', '耍💕', '过年🧨'], 
+            '21': ['法定年假', '耍💕', '过年🧨'], 
+            '22': ['法定年假', '耍💕', '过年🧨'], 
+            '23': ['法定年假','返程回青岛'] 
+          }
+        }
+      };
+
+    // 获取事件样式（无修改）
+    function getEventClass(event) {
+      if (event.includes('休年假')) return 'bg-event-annual text-purple-800';
+      if (event.includes('休婚假')) return 'bg-pink-100 text-gray-500';
+      if (event.includes('婚检') || event.includes('登记')) return 'bg-event-marriage text-purple-800';
+      if (event.includes('准备婚礼')) return 'bg-event-other text-red-800';
+      if (event.includes('婚礼')) return 'bg-event-wedding text-red-800';
+      if (event.includes('回家')) return 'bg-event-family text-yellow-800';
+      if (event.includes('结婚')) return 'bg-red-800 text-gray-100';
+      if (event.includes('法定年假')) return 'bg-red-400 text-gray-100';
+      if (event.includes('票')) return 'bg-event-family text-yellow-800';
+      return 'bg-event-other text-gray-800';
+    }
+
+    // 生成日历（无修改）
+    function generateCalendarForMonth(year, month) {
+      const container = document.getElementById('calendar-container');
+      const monthContainer = document.createElement('div');
+      monthContainer.className = 'mb-8';
+
+      const monthHeader = document.createElement('h3');
+      monthHeader.className = 'month-title mb-3';
+      const monthIcons = ['❄️', '❄️', '🌱', '🌱', '🌱', '☀️', '☀️', '☀️', '🍂', '🍂', '🍂', '❄️'];
+      monthHeader.innerHTML = `${monthIcons[month]} ${year}年${month + 1}月`;
+      monthContainer.appendChild(monthHeader);
+
+      const calendarGrid = document.createElement('div');
+      calendarGrid.className = 'grid grid-cols-7 gap-2';
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day bg-gray-50';
+        calendarGrid.appendChild(emptyDay);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+
+        const dateElement = document.createElement('div');
+        dateElement.className = 'text-sm font-medium mb-1';
+        dateElement.textContent = day;
+        dayElement.appendChild(dateElement);
+
+        const monthStr = (month + 1).toString();
+        const dayStr = day.toString();
+        if (events[year] && events[year][monthStr] && events[year][monthStr][dayStr]) {
+          const dayEvents = events[year][monthStr][dayStr];
+          dayEvents.forEach(event => {
+            const eventElement = document.createElement('div');
+            eventElement.className = `event-badge ${getEventClass(event)}`;
+            eventElement.textContent = event;
+            dayElement.appendChild(eventElement);
+          });
+          dayElement.classList.add('border-primary/30', 'bg-purple-50/30');
+
+          if (dayEvents.some(e => e.includes('结婚') || e.includes('婚礼'))) {
+            const icon = document.createElement('i');
+            icon.className = 'decorative-icon fa fa-heart';
+            dayElement.appendChild(icon);
+          } else if (dayEvents.some(e => e.includes('过年'))) {
+            const icon = document.createElement('i');
+            icon.className = 'decorative-icon fa fa-fire';
+            dayElement.appendChild(icon);
+          }
+        }
+
+        const today = new Date();
+        if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day) {
+          dayElement.classList.add('today-highlight');
+          dateElement.classList.add('text-primary', 'font-bold');
+        }
+
+        calendarGrid.appendChild(dayElement);
+      }
+
+      monthContainer.appendChild(calendarGrid);
+      container.appendChild(monthContainer);
+    }
+
+    // 初始化日历（无修改）
+    generateCalendarForMonth(2025, 10);
+    generateCalendarForMonth(2025, 11);
+    generateCalendarForMonth(2026, 0);
+    generateCalendarForMonth(2026, 1);
+  </script>
+</body>
+
+</html>
