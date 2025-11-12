@@ -128,13 +128,13 @@
           '12': {
             '4': ['休年假', '坐高铁回家', '拿户口本'],
             '5': ['休年假', '婚检', '登记'],
-            '6': ['尝菜（待定）'],
-            '7': ['参加瑶瑶婚礼', '返程回青岛']
+            '6': ['尝菜（待定）','十月十七'],
+            '7': ['参加瑶瑶婚礼','十月十八', '返程回青岛']
           }
         },
         '2026': {
           '1': { 
-            '24': ['坐高铁回家', '准备婚礼'], 
+            '24': ['坐高铁回家', '准备婚礼','腊月初六'], 
             '25': ['准备婚礼'], 
             '26': ['休年假', '准备婚礼'], 
             '27': ['休年假', '准备婚礼'], 
@@ -157,15 +157,15 @@
             '12': ['休婚假', '耍💕'], 
             '13': ['休婚假', '耍💕'], 
             '14': ['休婚假', '耍💕'], 
-            '15': ['法定年假', '耍💕', '过年🧨'], 
-            '16': ['法定年假', '耍💕', '过年🧨'], 
-            '17': ['法定年假', '耍💕', '过年🧨'], 
-            '18': ['法定年假', '耍💕', '过年🧨'], 
-            '19': ['法定年假', '耍💕', '过年🧨'], 
-            '20': ['法定年假', '耍💕', '过年🧨'], 
-            '21': ['法定年假', '耍💕', '过年🧨'], 
-            '22': ['法定年假', '耍💕', '过年🧨'], 
-            '23': ['法定年假','返程回青岛'] 
+            '15': ['法定年假', '耍💕', '廿八'], 
+            '16': ['法定年假', '耍💕', '除夕'], 
+            '17': ['法定年假', '耍💕', '春节'], 
+            '18': ['法定年假', '耍💕', '初二'], 
+            '19': ['法定年假', '耍💕', '初三'], 
+            '20': ['法定年假', '耍💕', '初四'], 
+            '21': ['法定年假', '耍💕', '初五'], 
+            '22': ['法定年假', '耍💕', '初六'], 
+            '23': ['法定年假','返程回青岛', '初七'] 
           }
         }
       };
@@ -181,6 +181,7 @@
       if (event.includes('结婚')) return 'bg-red-800 text-gray-100';
       if (event.includes('法定年假')) return 'bg-red-400 text-gray-100';
       if (event.includes('票')) return 'bg-event-family text-yellow-800';
+      if (event.includes('除夕')||event.includes('春节')||event.includes('初')) return 'bg-red-200 text-gray-1000';
       return 'bg-event-other text-gray-800';
     }
 
@@ -222,6 +223,7 @@
         const dayStr = day.toString();
         if (events[year] && events[year][monthStr] && events[year][monthStr][dayStr]) {
           const dayEvents = events[year][monthStr][dayStr];
+          
           dayEvents.forEach(event => {
             const eventElement = document.createElement('div');
             eventElement.className = `event-badge ${getEventClass(event)}`;
@@ -229,7 +231,7 @@
             dayElement.appendChild(eventElement);
           });
           dayElement.classList.add('border-primary/30', 'bg-purple-50/30');
-
+          
           if (dayEvents.some(e => e.includes('结婚') || e.includes('婚礼'))) {
             const icon = document.createElement('i');
             icon.className = 'decorative-icon fa fa-heart';
@@ -238,7 +240,7 @@
             const icon = document.createElement('i');
             icon.className = 'decorative-icon fa fa-fire';
             dayElement.appendChild(icon);
-          }
+          } 
         }
 
         const today = new Date();
